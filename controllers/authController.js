@@ -18,7 +18,7 @@ const createUser = async (req,res) => {
           else {
             let newUser = await userModel.create({
               userName,
-              pass: hash,
+              pass: pass,
               email,
             });
             let token = generateToken(newUser);
