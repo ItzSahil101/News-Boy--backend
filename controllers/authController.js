@@ -39,10 +39,14 @@ const LoginUser = async(req,res)=>{
     let userFind = await userModel.findOne({email: email});
     if(!userFind) return res.status(400).json({msg: "Email or Password is incorrect!"})
      else{
-    bcrypt.compare(pass, userFind.pass, (err, result)=>{
-      if(result){
-        let token = generateToken(userFind)
-        res.status(200).json({msg: "Sucessfully Logged In!", token: token})
+    // bcrypt.compare(pass, userFind.pass, (err, result)=>{
+    //   if(result){
+    //     let token = generateToken(userFind)
+    //     res.status(200).json({msg: "Sucessfully Logged In!", token: token})
+       if(pass === userFind.pass){
+           let token = generateToken(userFind)
+           res.status(200).json({msg: "Sucessfully Logged In!", token: token})
+       }
       } else{
         return res.status(400).json({msg: "Email or Password is incorrect!"});
       }
