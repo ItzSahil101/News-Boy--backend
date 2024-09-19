@@ -36,23 +36,19 @@ const createUser = async (req,res) => {
 const LoginUser = async(req,res)=>{
     let {email, pass} = req.body;
 
-    let userFind = await userModel.findOne({email: email});
-    if(!userFind) return res.status(400).json({msg: "Email or Password is incorrect!"})
-     else{
-    // bcrypt.compare(pass, userFind.pass, (err, result)=>{
-    //   if(result){
-    //     let token = generateToken(userFind)
-    //     res.status(200).json({msg: "Sucessfully Logged In!", token: token})
-       if(pass === userFind.pass){
-           let token = generateToken(userFind)
-           res.status(200).json({msg: "Sucessfully Logged In!", token: token})
-       }
-      } else{
-        return res.status(400).json({msg: "Email or Password is incorrect!"});
-      }
-    })
-  }
+   let userFind = await userModel.findOne({ email: email });
+if (!userFind) {
+  return res.status(400).json({ msg: "Email or Password is incorrect!" });
 }
+
+// Direct comparison of passwords (without hashing)
+if (pass === userFind.pass) {
+  let token = generateToken(userFind);
+  return res.status(200).json({ msg: "Successfully Logged In!", token: token });
+} else {
+  return res.status(400).json({ msg: "Email or Password is incorrect!" });
+}
+  }
 
 //logout -Auth
 const logout = (req,res)=>{
