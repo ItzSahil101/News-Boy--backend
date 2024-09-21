@@ -3,7 +3,6 @@ const axios = require("axios");
 // Helper function for API requests
 async function fetchNews(url, res) {
       axios.get(url).then((response)=>{
-            console.log(url, response)
         if(response.data.totalResults > 0){
             res.json({
                 status: 200,
@@ -20,7 +19,6 @@ async function fetchNews(url, res) {
         }
       })
       .catch((err)=>{
-            console.log(err)
         res.json({
             status: 500,
             success: false,
