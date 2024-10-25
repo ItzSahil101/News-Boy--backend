@@ -28,6 +28,7 @@ const post = require("./routes/post");
 const update = require('./routes/update');
 const remove = require('./routes/delete');
 const handlePost = require('./routes/handlePost');
+const serverImage = require("./routes/serveImage");
 
 //Routes
 app.use("/api/auth", authRoutes);
@@ -38,6 +39,7 @@ app.use("/api/upload", post);
 app.use("/api/update", update);
 app.use("/api/del", remove);
 app.use("/api/handle", handlePost)
+app.use("/api/serve", serverImage)
 
 //mongoose connection
 mongoose

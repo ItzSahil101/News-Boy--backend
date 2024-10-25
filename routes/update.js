@@ -1,47 +1,49 @@
 const express = require("express");
 const router = express.Router();
 const userModel = require('../models/userModel.js');
+const imageModel = require("../models/imageModel.js"); // Ensure this is properly imported
 const multer = require('multer');
-const path = require('path');
 const { generateToken } = require("../utils/generateToken");
 
-// Fix multer storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/images'); // Correct callback 'cb'
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
-  }
-});
+// Use memory storage with multer
+const upload = multer({ storage: multer.memoryStorage() });
 
-const upload = multer({ storage: storage });
-
-// Update route with Multer
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { userName, pass, id } = req.body;
-    const image = req.file.filename;
-    // console.log(image)
 
+    // Check if the image was uploaded
+    if (!req.file) {
+      return res.status(400).json({ msg: "File upload failed" });
+    }
+
+    // Save image to imageModel in base64 format
+    const newImage = await imageModel.create({
+      name: req.file.originalname,
+      contentType: req.file.mimetype,
+      imageBase64: req.file.buffer.toString('base64')
+    });
+
+    // Update user profile with new image ID and other details
     await userModel.updateOne(
       { _id: id },
       {
         $set: {
           userName: userName,
           pass: pass,
-          profileUrl: image,  // Save image URL to the profileUrl field
-        },
+          profileUrl: newImage._id // Store the image document ID as reference
+        }
       }
     );
 
-
-    // let uUser = await userModel.findOne({_id: id})
+    // Generate a new token if necessary (uncomment if needed)
+    // let uUser = await userModel.findOne({ _id: id });
     // let token = generateToken(uUser);
-    // console.log(uUser, token)
-    return res.status(200).json({ msg: "Updated" });
+
+    return res.status(200).json({ msg: "Updated", imageId: newImage._id });
   } catch (err) {
-    res.status(400).json({ err: err });
+    console.error("Error updating user:", err);
+    res.status(400).json({ err: err.message });
   }
 });
 
