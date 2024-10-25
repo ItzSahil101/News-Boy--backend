@@ -12,7 +12,13 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true
-    }
+    },
+    profileUrl: {
+       type: String
+    },
+    posts: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "post"}
+    ]
 })
 
 module.exports = mongoose.model("user", userSchema)

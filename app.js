@@ -16,6 +16,7 @@ app.use(cors(corsOptions))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/images', express.static('public/images'));
 
 
 //importing or requring routes
@@ -23,12 +24,20 @@ const authRoutes = require('./routes/auth');
 const newsRoutes = require('./routes/news');
 const userRoutes = require('./routes/userDet');
 const report = require('./routes/report');
+const post = require("./routes/post");
+const update = require('./routes/update');
+const remove = require('./routes/delete');
+const handlePost = require('./routes/handlePost');
 
 //Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/userDet", userRoutes);
-app.use("/api/report", report)
+app.use("/api/report", report);
+app.use("/api/upload", post);
+app.use("/api/update", update);
+app.use("/api/del", remove);
+app.use("/api/handle", handlePost)
 
 //mongoose connection
 mongoose
